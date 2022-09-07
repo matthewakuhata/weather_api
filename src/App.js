@@ -1,19 +1,23 @@
-import axios from 'axios';
 import { useState } from "react";
+import { getWeatherByLocation } from './api';
 import './App.css';
-const API_KEY = '1afd1547f6e1f159c9bebfc20c4504b8';
 
 function App() {
   const [data, setData] = useState({});
   const [location, setLocation] = useState('');
-
-  const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=metric&appid=${API_KEY}`;
+  const [error, setError] = useState('')
 
   const searchLocation = (event) => {
     if (event.key === 'Enter') {
-      axios.get(url).then(response => {
-        setData(response.data);
-        console.log(response.data);
+      getWeatherByLocation(location).then(({ data, error }) => {
+        if (error) {
+          console.log(error.message);
+          setError(error.message)
+          setData('');
+        } else {
+          setData(data);
+          setError('');
+        }
       });
     }
   }
